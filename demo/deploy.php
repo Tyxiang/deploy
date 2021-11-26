@@ -1,33 +1,31 @@
 <?php
-// jobs ------------------------------------------------------------------------------
-// Set up the work to be done during deploying
+// job config
 $jobs = array(
     array(
         "zip_file_url" => "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
-        "from_dir" => "markdown-website-1.9/src",
-        "to_dir" => "./",
+        "from" => "markdown-website-1.9/src",
+        "to" => "./",
     ),
     array(
         "zip_file_url" => "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
-        "from_dir" => "markdown-website-1.9/src",
-        "to_dir" => "./",
+        "from" => "markdown-website-1.9/src",
+        "to" => "./",
     ),
     array(
         "zip_file_url" => "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
-        "from_dir" => "markdown-website-1.9/src",
-        "to_dir" => "./",
+        "from" => "markdown-website-1.9/src",
+        "to" => "./",
     )
 );
 
-// program ----------------------------------------------------------------------------
 // main
 $zip_dir = "download";
 ob_end_clean();
 foreach ($jobs as $key => $job){
     echo "do job " . $key;
-    remove_dir($job['to_dir']);
+    remove_dir($job['to']);
     get_zip_to_dir($job['zip_file_url'], $zip_dir);
-    copy_dir($zip_dir . '/' . $job['from_dir'], $job['to_dir']);
+    copy_dir($zip_dir . '/' . $job['from'], $job['to']);
     remove_dir($zip_dir);
     echo " ok. <br>";
     flush(); 
