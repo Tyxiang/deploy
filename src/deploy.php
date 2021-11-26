@@ -1,25 +1,13 @@
 <?php
-// jobs ------------------------------------------------------------------------------
-// Set up the work to be done during deploying
-$jobs = array(
-    array(
-        "zip_file_url" => "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
-        "from_dir" => "markdown-website-1.9/src",
-        "to_dir" => "./",
-    ),
-    array(
-        "zip_file_url" => "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
-        "from_dir" => "markdown-website-1.9/src",
-        "to_dir" => "./",
-    ),
-    array(
-        "zip_file_url" => "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
-        "from_dir" => "markdown-website-1.9/src",
-        "to_dir" => "./",
-    )
-);
+$this_file = basename(__FILE__);
+$config_file = basename(__FILE__, ".php") . ".json";
+$config_json = file_get_contents($config_file);
+if($config_json == false){
+    exit("load config error!");
+}
+$config = json_decode($config_json, true);
+$jobs = $config["jobs"];
 
-// program ----------------------------------------------------------------------------
 // main
 $zip_dir = "download";
 ob_end_clean();
@@ -50,10 +38,12 @@ function get_zip_to_dir($zip_file_url, $zip_dir)
 
 function remove_dir($dir)
 {
+    global $this_file, $config_file;
     $handle = opendir($dir);
     while (($item = readdir($handle)) !== false) {
         if ($item == '.' || $item == '..') continue;
-        if ($item == basename(__FILE__)) continue;
+        if ($item == $this_file) continue;
+        if ($item == $config_file) continue;
         $path = $dir . '/' . $item;
         if (is_file($path)) unlink($path);
         if (is_dir($path)) remove_dir($path);

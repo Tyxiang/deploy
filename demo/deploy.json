@@ -1,0 +1,19 @@
+{
+  "jobs": [
+    {
+      "zip_file_url": "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
+      "from_dir": "markdown-website-1.9/src",
+      "to_dir": "./"
+    },
+    {
+      "zip_file_url": "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
+      "from_dir": "markdown-website-1.9/src",
+      "to_dir": "./"
+    },
+    {
+      "zip_file_url": "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
+      "from_dir": "markdown-website-1.9/src",
+      "to_dir": "./"
+    }
+  ]
+}
