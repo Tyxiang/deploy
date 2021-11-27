@@ -45,7 +45,6 @@ foreach ( $jobs as $key => $job ) {
             // reset source
             $source = $work_dir_name . '/' . $job['from'];
         }
-<<<<<<< HEAD
         // copy
         echo '<p>';
         // source must be exist   
@@ -62,43 +61,6 @@ foreach ( $jobs as $key => $job ) {
         copy_dir( $source, $dest );
         echo 'ok.<br>';
         echo '</p>';
-=======
-        // is exist   
-        if ( !file_exists( $source ) ) {
-            echo "'form' is not exist! <br>";
-        }
-        if ( !file_exists( $dest ) ) {
-            echo "'to' is not exist! <br>"; 
-        }
-        // if file
-        if ( is_file( $source ) && is_file( $dest ) ) {
-            echo '<p>';
-            if ( $job['clearfirst'] ) {
-                echo 'remove dest file first ';
-                unlink( $dest );
-                echo 'ok.<br>';
-            }
-            echo "copy file: " . $source . "<br>";
-            echo "to: " . $dest . "<br>";
-            copy( $source, $dest );
-            echo 'ok.<br>';
-            echo '</p>';
-        }
-        // if dir
-        if ( is_dir( $source ) && is_dir( $dest ) ) {
-            echo '<p>';
-            if ( $job['clearfirst'] ) {
-                echo 'remove dest dir first ';
-                remove_dir( $dest , $this_file_name_without_extension);
-                echo 'ok.<br>';
-            }
-            echo "copy dir: " . $source . "<br>";
-            echo "to: " . $dest . "<br>";
-            copy_dir( $source, $dest );
-            echo 'ok.<br>';
-            echo '</p>';
-        }
->>>>>>> 9c56d57727fe72b189f8729ef4bfbcd01e2a1d66
     echo '</p>';
 }
 remove_dir( $work_dir_name , $this_file_name_without_extension);
@@ -119,10 +81,7 @@ function unzip( $path, $dir ) {
 }
 
 function remove_dir( $dir, $exc ) {
-<<<<<<< HEAD
     if ( !file_exists( $dir ) ) return true;
-=======
->>>>>>> 9c56d57727fe72b189f8729ef4bfbcd01e2a1d66
     $handle = opendir( $dir );
     while ( $item = readdir( $handle )) {
         if ( $item == '.' || $item == '..' ) continue;
@@ -137,11 +96,7 @@ function remove_dir( $dir, $exc ) {
 }
 
 function copy_dir( $source, $dest ) {
-<<<<<<< HEAD
     if ( !file_exists( $dest ) ) mkdir( $dest, 0755, true);
-=======
-    if ( !file_exists( $dest ) ) mkdir( $dest );
->>>>>>> 9c56d57727fe72b189f8729ef4bfbcd01e2a1d66
     $handle = opendir( $source );
     while  ( $item = readdir( $handle ))  {
         if ( $item == '.' || $item == '..' ) continue;
