@@ -1,0 +1,16 @@
+{
+  "jobs": [
+    {
+      "url": "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
+      "from": "v1.9/markdown-website-1.9/src",
+      "to": "./",
+      "clearfirst": true
+    },
+    {
+      "url": "https://github.com/fimik-dev/tutorial/archive/refs/heads/main.zip",
+      "from": "main/tutorial-main/doc",
+      "to": "file/123/tutorial/",
+      "clearfirst": true
+    }
+  ]
+}
