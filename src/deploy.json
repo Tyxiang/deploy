@@ -9,9 +9,6 @@
     {
       "url": "https://github.com/fimik-dev/tutorial/archive/refs/heads/main.zip",
       "from": "main/tutorial-main/doc",
-<<<<<<< HEAD
-      "to": "file/123/tutorial/",
-=======
       "to": "file/tutorial/",
       "clearfirst": true
     },
@@ -19,7 +16,6 @@
       "url": "https://raw.githubusercontent.com/fimik-dev/p-14/master/README.md",
       "from": "README.md",
       "to": "file/product/p-14.md",
->>>>>>> 9c56d57727fe72b189f8729ef4bfbcd01e2a1d66
       "clearfirst": true
     }
   ]
