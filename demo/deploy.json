@@ -1,19 +1,22 @@
 {
   "jobs": [
     {
-      "zip_file_url": "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
-      "from_dir": "markdown-website-1.9/src",
-      "to_dir": "./"
+      "url": "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
+      "from": "v1.9/markdown-website-1.9/src",
+      "to": "./",
+      "clearfirst": true
     },
     {
-      "zip_file_url": "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
-      "from_dir": "markdown-website-1.9/src",
-      "to_dir": "./"
+      "url": "https://github.com/fimik-dev/tutorial/archive/refs/heads/main.zip",
+      "from": "main/tutorial-main/doc",
+      "to": "file/tutorial/",
+      "clearfirst": true
     },
     {
-      "zip_file_url": "https://github.com/Tyxiang/markdown-website/archive/refs/tags/v1.9.zip",
-      "from_dir": "markdown-website-1.9/src",
-      "to_dir": "./"
+      "url": "https://raw.githubusercontent.com/fimik-dev/p-14/master/README.md",
+      "from": "README.md",
+      "to": "file/product/p-14.md",
+      "clearfirst": true
     }
   ]
 }

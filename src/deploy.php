@@ -2,8 +2,7 @@
 ini_set("display_errors", "On");
 date_default_timezone_set("Asia/Shanghai");
 // main
-$this_file_pathinfo = pathinfo( __FILE__ );
-$this_file_name_without_extension = $this_file_pathinfo["filename"]; // without extension
+$this_file_name_without_extension = basename(__FILE__, '.php'); // without extension
 
 //// config
 $config_file_name = $this_file_name_without_extension . '.json';
@@ -13,84 +12,79 @@ $config = json_decode( $config_json, true );
 
 //// jobs
 $jobs = $config['jobs'];
-$temp_dir_name = $this_file_name_without_extension;
-mkdir( $temp_dir_name );
+$work_dir_name = $this_file_name_without_extension;
+mkdir( $work_dir_name );
 foreach ( $jobs as $key => $job ) {
     echo '<p>';
     echo '---------- job ( ' . $key . ' ) ----------';
-    do_job($job, $temp_dir_name);
+        // download
+        $url_pathinfo = pathinfo( $job['url'] );
+        $download_file_name = $url_pathinfo['basename']; // with extension
+        $download_file_name_without_extension = $url_pathinfo['filename']; 
+        $download_file_extension = $url_pathinfo['extension']; 
+        $download_file_path = $work_dir_name . '/' . $download_file_name;
+        echo '<p>';
+        echo 'download: ' . $job['url'] . '<br>';
+        echo 'to: ' . $download_file_path . '<br>';
+        download($job['url'], $download_file_path);
+        echo 'ok.<br>';
+        echo '</p>';
+        // set source and dest
+        $source = $job['from'];
+        $dest = $job['to'];
+        // unzip if need
+        if ( $download_file_extension == 'zip' ) {
+            $unzip_dir = $work_dir_name . '/' . $download_file_name_without_extension;
+            // filename
+            echo '<p>';
+            echo 'unzip: ' . $download_file_path . '<br>';
+            echo 'to: ' . $unzip_dir . '<br>';
+            unzip( $download_file_path, $unzip_dir );
+            echo 'ok.<br>';
+            echo '</p>';
+            // reset source
+            $source = $work_dir_name . '/' . $job['from'];
+        }
+        // is exist   
+        if ( !file_exists( $source ) ) {
+            echo "'form' is not exist! <br>";
+        }
+        if ( !file_exists( $dest ) ) {
+            echo "'to' is not exist! <br>"; 
+        }
+        // if file
+        if ( is_file( $source ) && is_file( $dest ) ) {
+            echo '<p>';
+            if ( $job['clearfirst'] ) {
+                echo 'remove dest file first ';
+                unlink( $dest );
+                echo 'ok.<br>';
+            }
+            echo "copy file: " . $source . "<br>";
+            echo "to: " . $dest . "<br>";
+            copy( $source, $dest );
+            echo 'ok.<br>';
+            echo '</p>';
+        }
+        // if dir
+        if ( is_dir( $source ) && is_dir( $dest ) ) {
+            echo '<p>';
+            if ( $job['clearfirst'] ) {
+                echo 'remove dest dir first ';
+                remove_dir( $dest , $this_file_name_without_extension);
+                echo 'ok.<br>';
+            }
+            echo "copy dir: " . $source . "<br>";
+            echo "to: " . $dest . "<br>";
+            copy_dir( $source, $dest );
+            echo 'ok.<br>';
+            echo '</p>';
+        }
     echo '</p>';
 }
-remove_dir( $temp_dir_name , $this_file_name_without_extension);
+remove_dir( $work_dir_name , $this_file_name_without_extension);
 
 // func
-
-//// jobs
-function do_job($job, $dir){
-    // download
-    $url_pathinfo = pathinfo( $job['url'] );
-    $download_file_name = $url_pathinfo['basename']; // with extension
-    $download_file_name_without_extension = $url_pathinfo['filename']; 
-    $download_file_extension = $url_pathinfo['extension']; 
-    $download_file_path = $dir . '/' . $download_file_name;
-    echo '<p>';
-    echo 'download: ' . $job['url'] . '<br>';
-    echo 'to: ' . $download_file_path . '<br>';
-    download($job['url'], $download_file_path);
-    echo 'ok.<br>';
-    echo '</p>';
-    // set source and dest
-    $source = $job['from'];
-    $dest = $job['to'];
-    // unzip if need
-    if ( $download_file_extension == 'zip' ) {
-        $unzip_dir = $dir . '/' . $download_file_name_without_extension;
-        // filename
-        echo '<p>';
-        echo 'unzip: ' . $download_file_path . '<br>';
-        echo 'to: ' . $unzip_dir . '<br>';
-        unzip( $download_file_path, $unzip_dir );
-        echo 'ok.<br>';
-        echo '</p>';
-        // reset source
-        $source = $dir . '/' . $job['from'];
-    }
-    // is exist
-    /*     
-    if ( !file_exists( $source ) ) echo "'form' is not exist! <br>";
-    if ( !file_exists( $dest ) ) echo "'to' is not exist! <br>"; 
-    */
-    // if file
-    if ( is_file( $source ) && is_file( $dest ) ) {
-        echo '<p>';
-        if ( $job['clearfirst'] ) {
-            echo 'remove dest file first ';
-            unlink( $dest );
-            echo 'ok.<br>';
-        }
-        echo "copy file: " . $source . "<br>";
-        echo "to: " . $dest . "<br>";
-        copy( $source, $dest );
-        echo 'ok.<br>';
-        echo '</p>';
-    }
-    // if dir
-    if ( is_dir( $source ) && is_dir( $dest ) ) {
-        echo '<p>';
-        if ( $job['clearfirst'] ) {
-            echo 'remove dest dir first ';
-            remove_dir( $dest , $this_file_name_without_extension);
-            echo 'ok.<br>';
-        }
-        echo "copy dir: " . $source . "<br>";
-        echo "to: " . $dest . "<br>";
-        copy_dir( $source, $dest );
-        echo 'ok.<br>';
-        echo '</p>';
-    }
-}
-
-//// base
 function download($url, $dir){
     $content = file_get_contents( $url );
     file_put_contents( $dir, $content );
