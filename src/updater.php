@@ -4,19 +4,28 @@ date_default_timezone_set("Asia/Shanghai");
 // main
 $this_file_name_without_extension = basename(__FILE__, '.php'); // without extension
 
+//// log prepare
+$log_string = "";
+$log_file_name = $this_file_name_without_extension . ".log";
+
 //// config
 $config_file_name = $this_file_name_without_extension . '.json';
 $config_json = file_get_contents($config_file_name);
 if ($config_json == false) {
-    exit('load config error!');
+    $message = 'load config error' . PHP_EOL;
+    $log_string = $log_string . $message;
+    echo '<p>';
+    echo $message;
+    echo '</p>';
+    exit();
 }
-
 $config = json_decode($config_json, true);
 
-//// jobs
-$jobs = $config['jobs'];
+//// work dir
 $work_dir_name = $this_file_name_without_extension;
 mkdir($work_dir_name);
+//// jobs
+$jobs = $config['jobs'];
 foreach ($jobs as $key => $job) {
     echo '<p>';
     echo '---------- job ( ' . $key . ' ) ----------';
@@ -26,6 +35,10 @@ foreach ($jobs as $key => $job) {
     $download_file_name_without_extension = $url_pathinfo['filename'];
     $download_file_extension = $url_pathinfo['extension'];
     $download_file_path = $work_dir_name . '/' . $download_file_name;
+
+    $message = 'load config error' . PHP_EOL;
+    $log_string = $log_string . $message;
+    
     echo '<p>';
     echo 'download: ' . $job['url'] . '<br>';
     echo 'to: ' . $download_file_path . '<br>';
@@ -82,6 +95,10 @@ foreach ($jobs as $key => $job) {
 }
 remove_dir( $work_dir_name );
 
+//// log
+echo $log_string;
+file_put_contents($log_file_name, $log_string, FILE_APPEND);
+
 // func
 function download($url, $dir)
 {
@@ -135,6 +152,9 @@ function remove_dir($dir)
             continue;
         }
         if ($item == $this_file_name_without_extension . '.json') {
+            continue;
+        }
+        if ($item == $this_file_name_without_extension . '.log') {
             continue;
         }
         $path = $dir . '/' . $item;
