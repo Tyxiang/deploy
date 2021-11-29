@@ -1,2 +1,3 @@
 <?php
-echo $r = 'xxx';
+$in = [];
+echo $in[]=1;

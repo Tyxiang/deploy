@@ -12,9 +12,7 @@ ini_set("display_errors", "On");
 date_default_timezone_set("Asia/Shanghai");
 // main
 $log_file_name = 'update.log';
-$job_dir_name = 'job';
 $config_file_name = 'config.json';
-$log_file_name = "default.log";
 //// config
 $config_json = file_get_contents($config_file_name);
 if ($config_json == false) {
@@ -26,59 +24,96 @@ if ($config_json == false) {
     exit();
 }
 $config = json_decode($config_json, true);
-//// creat work dir
-@mkdir($job_dir_name);
 //// jobs
 $jobs = $config['jobs'];
 foreach ($jobs as $key => $job) {
     echo '<p>';
     echo '---------- job ( ' . $key . ' ) ----------';
-    $msg = do_job($job_dir_name, $job);
-    save_log($msg, $log_file_name);
+    $msgs = do_job($job);
+    foreach($msgs as $msg){
+        save_log($msg, $log_file_name);
+    }
     echo '</p>';
 }
-//// delete work dir
-//remove_dir($job_dir_name);
+//// del temp
+echo '<p>';
+echo '---------- clear ----------';
+foreach ($jobs as $job) {
+    $msgs = do_clear($job);
+    foreach($msgs as $msg){
+        save_log($msg, $log_file_name);
+    }
+}
+echo '</p>';
 
 // func
-function do_job($job_dir_name, $job) {
-    $source = $job_dir_name . '/' . $job['copy'];
-    $dest = $job['to'];
+//// app
+function do_job($job) {
+    $r = [];
+    // job name
+    $job_name = md5($job['download']);
     // download
-    $download_file_name = basename($job['download']); // with ext
-    $download_file_path = $job_dir_name . '/' . $download_file_name;
+    $download_file_name = $job_name . '.tmp'; 
     echo '<p>';
-    echo 'download: ' . $job['download'] . '<br>';
-    echo $r = download($job['download'], $download_file_path);
+    echo 'download: ' . $job['download'];
+    echo '<br>';
+    if (file_exists($download_file_name)) {
+        echo $r[] = 'file already exist';
+    } else {
+        echo $r[] = download($job['download'], $download_file_name);
+    }
     echo '</p>';
     // unzip
-    if ($job['unzip']) {
-        $unzip_dir_path = $job_dir_name . '/' . 'source';
-        $source = $unzip_dir_path . '/' . $job['copy'];
-        echo '<p>';
-        echo 'unzip: ' . $download_file_name . '<br>';
-        echo $r = unzip($download_file_path, $unzip_dir_path);
-        echo '</p>';
+    $unzip_dir_name = $job_name;
+    echo '<p>';
+    echo 'unzip: ' . $download_file_name;
+    echo '<br>';
+    if (file_exists($unzip_dir_name)) {
+        echo $r[] = 'unzip dir already exist';
+    } else {
+        echo $r[] = unzip($download_file_name, $unzip_dir_name);
     }
-    // remove_dest
+    echo '</p>';
+    // set source and dest
+    $source = $unzip_dir_name . '/' . $job['copy'];
+    $dest = $job['to'];
+    // clear_dest
     if ($job['clear_dest']) {
         echo '<p>';
-        echo 'remove: ' . $job['to'] . '<br>';
-        if (is_dir($source)) echo $r = remove_dir($dest);
-        if (is_file($source)) echo $r = remove_file($dest);
+        echo 'remove: ' . $job['to'];
+        echo '<br>';
+        if (file_exists($job['to'])) {
+            if (is_dir($source)) echo $r[] = remove_dir($dest);
+            if (is_file($source)) echo $r[] = remove_file($dest);
+        } else {
+            echo $r[] = 'not exist';
+        }
         echo '</p>';
     }
     // copy
     echo "<p>";
-    echo "copy: " . $source . "<br>";
-    echo "to: " . $dest . "<br>";
-    if (is_dir($source)) echo $r = copy_dir($source, $dest);
-    if (is_file($source)) echo $r = copy_file($source, $dest);
+    echo "copy: " . $job['copy'];
+    echo '<br>';
+    echo "to: " . $job['to'];
+    echo '<br>';
+    if (is_dir($source)) echo $r[] = copy_dir($source, $dest);
+    if (is_file($source)) echo $r[] = copy_file($source, $dest);
     echo "</p>";
     // return
     return $r;
 }
 
+function do_clear($job) {
+    $r = [];
+    $job_name = md5($job['download']);
+    $download_file_name = $job_name . '.tmp'; 
+    if (file_exists($download_file_name)) $r[] = remove_file($download_file_name);
+    $unzip_dir_name = $job_name;
+    if (file_exists($unzip_dir_name)) $r[] = remove_dir($unzip_dir_name);
+    return $r;
+}
+
+//// core
 function save_log($msg, $log_file_name) {
     $item = '[ ' . date('Y-m-d H:i:s') . ' ] ' . $msg . PHP_EOL;
     $r = file_put_contents($log_file_name, $item, FILE_APPEND);
@@ -121,8 +156,7 @@ function remove_dir($dir)
             if ($r !== "ok") return "remove dir error";
         }
     }
-    $r = rmdir($dir);
-    if ($r === false) return "rmdir error";
+    @rmdir($dir);
     return "ok";
 }
 
@@ -136,14 +170,14 @@ function copy_dir($source, $dest)
     if ($handle === false) return "opendir error";
     while ($item = readdir($handle)) {
         if ($item == '.' || $item == '..') continue;
-        $path_source = $source . '/' . $item;
-        $path_dest = $dest . '/' . $item;
-        if (is_file($path_source)) {
-            $r = copy($path_source, $path_dest);
+        $source_path = $source . '/' . $item;
+        $dest_path = $dest . '/' . $item;
+        if (is_file($source_path)) {
+            $r = copy($source_path, $dest_path);
             if ($r === false) return "copy error";
         }
-        if (is_dir($path_source)) {
-            $r = copy_dir($path_source, $path_dest);
+        if (is_dir($source_path)) {
+            $r = copy_dir($source_path, $dest_path);
             if ($r !== "ok") return "copy dir error";
         }
     }
@@ -156,14 +190,14 @@ function remove_file($path)
     if (!file_exists($path)) return "file not exist";
     $r = unlink($path);
     if ($r === false) return "unlink error";
-    return true;
+    return 'ok';
 }
 
 function copy_file($source, $dest)
 {
-    $dest_dir = dirname($dest);
-    if (!file_exists($dest_dir)) {
-        $r = mkdir($dest_dir, 0755, true);
+    $dest_dir_path = dirname($dest);
+    if (!file_exists($dest_dir_path)) {
+        $r = mkdir($dest_dir_path, 0755, true);
         if ($r === false) return "mkdir error";
     }
     $r = copy($source, $dest);
