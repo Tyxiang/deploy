@@ -29,10 +29,14 @@ $jobs = $config['jobs'];
 foreach ($jobs as $key => $job) {
     echo '<p>';
     echo '---------- job ( ' . $key . ' ) ----------';
+    echo '<p>';
     $msgs = do_job($job);
     foreach($msgs as $msg){
+        echo $msg;
+        echo '<br>';
         save_log($msg, $log_file_name);
     }
+    echo '</p>';
     echo '</p>';
 }
 //// del temp
@@ -54,51 +58,37 @@ function do_job($job) {
     $job_name = md5($job['download']);
     // download
     $download_file_name = $job_name . '.tmp'; 
-    echo '<p>';
-    echo 'download: ' . $job['download'];
-    echo '<br>';
     if (file_exists($download_file_name)) {
-        echo $r[] = 'file already exist';
+        $msg = 'file already exist';
     } else {
-        echo $r[] = download($job['download'], $download_file_name);
+        $msg = download($job['download'], $download_file_name);
     }
-    echo '</p>';
+    $r[] = 'download ' . $job['download'] . ' ... ' . $msg;
     // unzip
     $unzip_dir_name = $job_name;
-    echo '<p>';
-    echo 'unzip: ' . $download_file_name;
-    echo '<br>';
     if (file_exists($unzip_dir_name)) {
-        echo $r[] = 'unzip dir already exist';
+        $msg = 'unzip dir already exist';
     } else {
-        echo $r[] = unzip($download_file_name, $unzip_dir_name);
+        $msg = unzip($download_file_name, $unzip_dir_name);
     }
-    echo '</p>';
+    $r[] = 'unzip ... ' . $msg;
     // set source and dest
     $source = $unzip_dir_name . '/' . $job['copy'];
     $dest = $job['to'];
     // clear_dest
     if ($job['clear_dest']) {
-        echo '<p>';
-        echo 'remove: ' . $job['to'];
-        echo '<br>';
         if (file_exists($job['to'])) {
-            if (is_dir($source)) echo $r[] = remove_dir($dest);
-            if (is_file($source)) echo $r[] = remove_file($dest);
+            if (is_dir($source)) $msg = remove_dir($dest);
+            if (is_file($source)) $msg = remove_file($dest);
         } else {
-            echo $r[] = 'not exist';
+            $msg = 'not exist';
         }
-        echo '</p>';
     }
+    $r[] = 'clear dest ' . $job['to'] . ' ... ' . $msg;
     // copy
-    echo "<p>";
-    echo "copy: " . $job['copy'];
-    echo '<br>';
-    echo "to: " . $job['to'];
-    echo '<br>';
-    if (is_dir($source)) echo $r[] = copy_dir($source, $dest);
-    if (is_file($source)) echo $r[] = copy_file($source, $dest);
-    echo "</p>";
+    if (is_dir($source)) $msg = copy_dir($source, $dest);
+    if (is_file($source)) $msg = copy_file($source, $dest);
+    $r[] = 'copy ' . $job['copy'] . ' to ' . $job['to'] .' ... ' . $msg;
     // return
     return $r;
 }
@@ -106,21 +96,22 @@ function do_job($job) {
 function do_clear($job) {
     $r = [];
     $job_name = md5($job['download']);
+    // del download file
     $download_file_name = $job_name . '.tmp'; 
-    if (file_exists($download_file_name)) $r[] = remove_file($download_file_name);
+    if (file_exists($download_file_name)) {
+        $msg = remove_file($download_file_name);
+        $r[] = 'remove download file ... ' . $msg;
+    }
+    // del unzip dir
     $unzip_dir_name = $job_name;
-    if (file_exists($unzip_dir_name)) $r[] = remove_dir($unzip_dir_name);
+    if (file_exists($unzip_dir_name)) {
+        $msg = remove_dir($unzip_dir_name);
+        $r[] = 'remove unzip dir ... ' . $msg;
+    }
     return $r;
 }
 
 //// core
-function save_log($msg, $log_file_name) {
-    $item = '[ ' . date('Y-m-d H:i:s') . ' ] ' . $msg . PHP_EOL;
-    $r = file_put_contents($log_file_name, $item, FILE_APPEND);
-    if ($r === false) return "file put content error";
-    return 'ok';
-}
-
 function download($url, $dir)
 {
     $content = file_get_contents($url);
@@ -203,4 +194,11 @@ function copy_file($source, $dest)
     $r = copy($source, $dest);
     if ($r === false) return "copy error";
     return "ok";
+}
+
+function save_log($msg, $log_file_name) {
+    $item = '[ ' . date('Y-m-d H:i:s') . ' ] ' . $msg . PHP_EOL;
+    $r = file_put_contents($log_file_name, $item, FILE_APPEND);
+    if ($r === false) return "file put content error";
+    return 'ok';
 }
