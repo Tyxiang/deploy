@@ -12,9 +12,8 @@ ini_set('display_errors', 'On');
 date_default_timezone_set('Asia/Shanghai');
 // main
 $this_file_name_main_part = basename(__FILE__, '.php');
-$this_file_name = $this_file_name_main_part . '.php';
-$log_file_name = $this_file_name_main_part . '.log';
 $config_file_name = $this_file_name_main_part . '.json';
+$log_file_name = $this_file_name_main_part . '.log';
 //// config
 $config_json = file_get_contents($config_file_name);
 if ($config_json == false) {
@@ -28,7 +27,7 @@ if ($config_json == false) {
 $config = json_decode($config_json, true);
 //// jobs
 $jobs = $config['jobs'];
-$excludes = $config['exclude'];
+$excludes = $config['excludes'];
 foreach ($jobs as $key => $job) {
     echo '<p>';
     echo '---------- job ( ' . $key . ' ) ----------';
@@ -185,14 +184,18 @@ function copy_dir($source, $dest)
 function remove_file($path)
 {
     if (!file_exists($path)) return 'file not exist';
-    // self exclude
+    //echo 'path: '. $path.'<br>';
+    //echo 'exclude: '. './update.php'.'<br>';
+    //exclude
     global $excludes;
-    //$this_dir_path = dirname(__FILE__);
     foreach ($excludes as $exclude) {
-        //$exclude_file_path = $this_dir_path . '\\' . $exclude;
-        if (realpath($item) == realpath($exclude)) return 'excluded!';
+        echo 'exclude: '. var_dump($exclude) . '<br>';
+        echo 'exclude: '. realpath($exclude) . '<br>';
+        echo 'exclude: '. realpath('./update.php') . '<br>';
+        //if (realpath($path) == realpath('./update.php')) return 'ok.';
+        //if (realpath($path) == realpath('./update.json')) return 'ok.';
+        //if (realpath($path) == realpath('./update.log')) return 'ok.';
     }
-    //
     $r = unlink($path);
     if ($r === false) return 'unlink error!';
     return 'ok.';
