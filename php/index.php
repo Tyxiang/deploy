@@ -1,3 +1,2 @@
 <?php
-$in = [];
-echo $in[]=1;
+if (is_dir('1234')) echo 'xxxxx';
