@@ -47,10 +47,14 @@ foreach ($jobs as $key => $job) {
 echo '<p>';
 echo '----------- clear -----------';
 foreach ($jobs as $job) {
+    echo '<p>';
     $msgs = do_clear_temp($job);
     foreach($msgs as $msg){
         save_log($msg, $log_file_name);
+        echo $msg;
+        echo '<br>';
     }
+    echo '</p>';
 }
 echo '</p>';
 
@@ -180,7 +184,8 @@ function remove_file($path)
         if (realpath($path) == realpath($protect)) return 'ok.';
     }
     //
-    $r = unlink($path);
+    $delet_path = iconv('UTF-8', 'GBK', $path);
+    $r = unlink($delet_path);
     if ($r === false) return 'unlink error!';
     return 'ok.';
 }

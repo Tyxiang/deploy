@@ -184,7 +184,8 @@ function remove_file($path)
         if (realpath($path) == realpath($protect)) return 'ok.';
     }
     //
-    $r = unlink($path);
+    $delet_path = iconv('UTF-8', 'GBK', $path);
+    $r = unlink($delet_path);
     if ($r === false) return 'unlink error!';
     return 'ok.';
 }
