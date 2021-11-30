@@ -50,6 +50,8 @@ foreach ($jobs as $job) {
     $msgs = do_clear_temp($job);
     foreach($msgs as $msg){
         save_log($msg, $log_file_name);
+        echo $msg;
+        echo '<br>';
     }
 }
 echo '</p>';
