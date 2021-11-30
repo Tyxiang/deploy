@@ -29,12 +29,16 @@ $config = json_decode($config_json, true);
 
 //// jobs
 $jobs = $config['jobs'];
-$protects = $config['protect'];
+if (isset($config['protect'])) {
+    $protects_jobs = $config['protect'];
+} else {
+    $protects_jobs = [];
+}
 foreach ($jobs as $key => $job) {
     echo '<p>';
     echo '---------- job ( ' . $key . ' ) ----------';
     echo '<p>';
-    $msgs = do_job($job, $protects);
+    $msgs = do_job($job, $protects_jobs);
     foreach($msgs as $msg){
         save_log($msg, $log_file_name);
         echo $msg;
@@ -48,7 +52,7 @@ echo '<p>';
 echo '----------- clear -----------';
 foreach ($jobs as $job) {
     echo '<p>';
-    $msgs = clear_temp($job, $protects);
+    $msgs = clear_temp($job);
     foreach($msgs as $msg){
         save_log($msg, $log_file_name);
         echo $msg;
@@ -69,7 +73,12 @@ function do_job($job, $protects) {
     $clear_path = $job['clear'];
     $source_path = $unzip_dir_name . '/' . $job['copy'];
     $dest_path = $job['to'];
-    $protects = array_merge($protects, $job['protect']);
+    if (isset($job['protect'])) {
+        $protects_job = $job['protect'];
+    } else {
+        $protects_job = [];
+    }
+    $protects = array_merge($protects, $protects_job);
     // clear dest
     // Clean should be in front, otherwise the downloaded content will be deleted when the dest is './'
     if ($clear_path != '') {
@@ -109,19 +118,19 @@ function do_job($job, $protects) {
     return $r;
 }
 
-function clear_temp($job, $protects) {
+function clear_temp($job) {
     $r = [];
     $job_name = md5($job['download']);
     // del download file
     $download_file_name = $job_name . '.tmp'; 
     if (file_exists($download_file_name)) {
-        $msg = remove_file($download_file_name, $protects);
+        $msg = remove_file($download_file_name, []);
         $r[] = 'remove download file ---> ' . $msg;
     }
     // del unzip dir
     $unzip_dir_name = $job_name;
     if (file_exists($unzip_dir_name)) {
-        $msg = remove_dir($unzip_dir_name, $protects);
+        $msg = remove_dir($unzip_dir_name, []);
         $r[] = 'remove unzip dir ---> ' . $msg;
     }
     // return
@@ -129,8 +138,7 @@ function clear_temp($job, $protects) {
 }
 
 //// core
-function download($url, $dir)
-{
+function download($url, $dir) {
     $content = file_get_contents($url);
     if ($content === false) return 'file get contents error!';
     $r = file_put_contents($dir, $content);
@@ -138,8 +146,7 @@ function download($url, $dir)
     return 'ok.';
 }
 
-function unzip($path, $dir)
-{
+function unzip($path, $dir) {
     $zipper = new ZipArchive;
     $r = $zipper->open($path);
     if ($r !== true) return 'open zip file error!';
@@ -150,8 +157,7 @@ function unzip($path, $dir)
     return 'ok.';
 }
 
-function remove_dir($path, $protects)
-{
+function remove_dir($path, $protects) {
     // protect
     foreach ($protects as $protect) {
         if (realpath($path) == realpath($protect)) return 'ok.';
@@ -171,8 +177,7 @@ function remove_dir($path, $protects)
     return 'ok.';
 }
 
-function remove_file($path, $protects)
-{
+function remove_file($path, $protects) {
     // protect
     foreach ($protects as $protect) {
         if (realpath($path) == realpath($protect)) return 'ok.';
@@ -187,8 +192,7 @@ function remove_file($path, $protects)
 }
 
 
-function copy_dir($source, $dest, $protects)
-{
+function copy_dir($source, $dest, $protects) {
     // protect
     foreach ($protects as $protect) {
         if (realpath($dest) == realpath($protect)) return 'ok.';
@@ -217,8 +221,7 @@ function copy_dir($source, $dest, $protects)
     return 'ok.';
 }
 
-function copy_file($source, $dest, $protects)
-{
+function copy_file($source, $dest, $protects) {
     // protect
     foreach ($protects as $protect) {
         if (realpath($dest) == realpath($protect)) return 'ok.';

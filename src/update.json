@@ -5,27 +5,20 @@
       "clear": "",
       "copy": "simple-php-updater-main/test/source/src",
       "to": "./",
-      "protect": [
-        "./update.php",
-        "./update.json",
-        "./update.log",
-        "./image"
-      ]
+      "protect": ["./image"]
     },
     {
       "download": "https://github.com/Tyxiang/simple-php-updater/archive/refs/heads/main.zip",
       "clear": "./file/product/p-01",
       "copy": "simple-php-updater-main/test/source/doc",
-      "to": "./file/product/p-01",
-      "protect": []
+      "to": "./file/product/p-01"
     },
     {
       "download": "https://github.com/Tyxiang/simple-php-updater/archive/refs/heads/main.zip",
       "clear": "",
       "copy": "simple-php-updater-main/test/source/doc/readme.md",
-      "to": "./file/product/p-02/readme.md",
-      "protect": []
+      "to": "./file/product/p-02/readme.md"
     }
   ],
-  "protect": []
+  "protect": ["./update.php", "./update.json", "./update.log"]
 }

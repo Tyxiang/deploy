@@ -1,7 +1,7 @@
 <?php
-$a = [1,2,3];
-$b = ["a", "b", "c"];
+$a = [];
+$a['a'] = 'a';
+$a['b'] = 'b';
+$a['c'] = 'c';
 
-$b = array_merge($a, $b);
-
-var_dump($b);
+var_dump(isset($a['f']));
