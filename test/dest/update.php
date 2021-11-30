@@ -34,7 +34,7 @@ foreach ($jobs as $key => $job) {
     echo '<p>';
     echo '---------- job ( ' . $key . ' ) ----------';
     echo '<p>';
-    $msgs = do_job($job);
+    $msgs = do_job($job, $protects);
     foreach($msgs as $msg){
         save_log($msg, $log_file_name);
         echo $msg;
@@ -48,7 +48,7 @@ echo '<p>';
 echo '----------- clear -----------';
 foreach ($jobs as $job) {
     echo '<p>';
-    $msgs = do_clear_temp($job);
+    $msgs = clear_temp($job, $protects);
     foreach($msgs as $msg){
         save_log($msg, $log_file_name);
         echo $msg;
@@ -60,7 +60,7 @@ echo '</p>';
 
 // func
 //// app
-function do_job($job) {
+function do_job($job, $protects) {
     $r = [];
     // job name
     $job_name = md5($job['download']);
@@ -69,12 +69,13 @@ function do_job($job) {
     $clear_path = $job['clear'];
     $source_path = $unzip_dir_name . '/' . $job['copy'];
     $dest_path = $job['to'];
+    $protects = array_merge($protects, $job['protect']);
     // clear dest
     // Clean should be in front, otherwise the downloaded content will be deleted when the dest is './'
     if ($clear_path != '') {
         if (file_exists($clear_path)) {
-            if (is_dir($clear_path)) $msg = remove_dir($clear_path);
-            if (is_file($clear_path)) $msg = remove_file($clear_path);
+            if (is_dir($clear_path)) $msg = remove_dir($clear_path, $protects);
+            if (is_file($clear_path)) $msg = remove_file($clear_path, $protects);
         } else {
             $msg = 'dest not exist!';
         }
@@ -97,8 +98,8 @@ function do_job($job) {
     // copy
     if ($source_path != '' && $dest_path != '') {
         if (file_exists($source_path)) {
-            if (is_dir($source_path)) $msg = copy_dir($source_path, $dest_path);
-            if (is_file($source_path)) $msg = copy_file($source_path, $dest_path);
+            if (is_dir($source_path)) $msg = copy_dir($source_path, $dest_path, $protects);
+            if (is_file($source_path)) $msg = copy_file($source_path, $dest_path, $protects);
         }else{
             $msg = 'source not exist!';
         }
@@ -108,19 +109,19 @@ function do_job($job) {
     return $r;
 }
 
-function do_clear_temp($job) {
+function clear_temp($job, $protects) {
     $r = [];
     $job_name = md5($job['download']);
     // del download file
     $download_file_name = $job_name . '.tmp'; 
     if (file_exists($download_file_name)) {
-        $msg = remove_file($download_file_name);
+        $msg = remove_file($download_file_name, $protects);
         $r[] = 'remove download file ---> ' . $msg;
     }
     // del unzip dir
     $unzip_dir_name = $job_name;
     if (file_exists($unzip_dir_name)) {
-        $msg = remove_dir($unzip_dir_name);
+        $msg = remove_dir($unzip_dir_name, $protects);
         $r[] = 'remove unzip dir ---> ' . $msg;
     }
     // return
@@ -149,32 +150,30 @@ function unzip($path, $dir)
     return 'ok.';
 }
 
-function remove_dir($dir)
+function remove_dir($path, $protects)
 {
     // protect
-    global $protects;
     foreach ($protects as $protect) {
-        if (realpath($dir) == realpath($protect)) return 'ok.';
+        if (realpath($path) == realpath($protect)) return 'ok.';
     }
     // main
-    if (!file_exists($dir)) return 'dir not exist!';
-    foreach (glob($dir . '/*') as $item) {
+    if (!file_exists($path)) return 'dir not exist!';
+    foreach (glob($path . '/*') as $item) {
         if (is_file($item)) {
-            $r = remove_file($item);
+            $r = remove_file($item, $protects);
             if ($r !== 'ok.') return 'remove file error!';
         } else {
-            $r = remove_dir($item);
+            $r = remove_dir($item, $protects);
             if ($r !== 'ok.') return 'remove dir error!';
         }
     }
-    @rmdir($dir);
+    @rmdir($path);
     return 'ok.';
 }
 
-function remove_file($path)
+function remove_file($path, $protects)
 {
     // protect
-    global $protects;
     foreach ($protects as $protect) {
         if (realpath($path) == realpath($protect)) return 'ok.';
     }
@@ -188,10 +187,9 @@ function remove_file($path)
 }
 
 
-function copy_dir($source, $dest)
+function copy_dir($source, $dest, $protects)
 {
     // protect
-    global $protects;
     foreach ($protects as $protect) {
         if (realpath($dest) == realpath($protect)) return 'ok.';
     }
@@ -207,11 +205,11 @@ function copy_dir($source, $dest)
         $source_path = $source . '/' . $item;
         $dest_path = $dest . '/' . $item;
         if (is_file($source_path)) {
-            $r = copy_file($source_path, $dest_path);
+            $r = copy_file($source_path, $dest_path, $protects);
             if ($r !== 'ok.') return 'copy file error!';
         }
         if (is_dir($source_path)) {
-            $r = copy_dir($source_path, $dest_path);
+            $r = copy_dir($source_path, $dest_path, $protects);
             if ($r !== 'ok.') return 'copy dir error!';
         }
     }
@@ -219,10 +217,9 @@ function copy_dir($source, $dest)
     return 'ok.';
 }
 
-function copy_file($source, $dest)
+function copy_file($source, $dest, $protects)
 {
     // protect
-    global $protects;
     foreach ($protects as $protect) {
         if (realpath($dest) == realpath($protect)) return 'ok.';
     }

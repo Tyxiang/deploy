@@ -1,6 +1,7 @@
 <?php
-$config_json = file_get_contents("update.json");
-$config = json_decode($config_json);
+$a = [1,2,3];
+$b = ["a", "b", "c"];
 
-$jobs = $config -> jobs;
+$b = array_merge($a, $b);
 
+var_dump($b);
