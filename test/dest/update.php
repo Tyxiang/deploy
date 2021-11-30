@@ -184,8 +184,9 @@ function remove_file($path)
         if (realpath($path) == realpath($protect)) return 'ok.';
     }
     //
-    $delet_path = iconv('UTF-8', 'GBK', $path);
-    $r = unlink($delet_path);
+    // $path_gbk = iconv('UTF-8', 'GBK', $path);
+    // $r = unlink($path_gbk);
+    $r = unlink($path);
     if ($r === false) return 'unlink error!';
     return 'ok.';
 }
@@ -223,6 +224,9 @@ function copy_file($source, $dest)
         $r = mkdir($dest_dir_path, 0755, true);
         if ($r === false) return 'mkdir error!';
     }
+    // $source_gbk = iconv('UTF-8', 'GBK', $source);
+    // $dest_gbk = iconv('UTF-8', 'GBK', $dest);
+    // $r = copy($source_gbk, $dest_gbk);
     $r = copy($source, $dest);
     if ($r === false) return 'copy error!';
     return 'ok.';
