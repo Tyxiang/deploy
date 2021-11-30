@@ -91,11 +91,6 @@ function do_job($job) {
     }
     // unzip
     if (file_exists($download_file_name)){
-        // if (file_exists($unzip_dir_name)) {
-        //     $msg = 'unzip dir already exist!';
-        // } else {
-        //     $msg = unzip($download_file_name, $unzip_dir_name);
-        // }
         $msg = unzip($download_file_name, $unzip_dir_name);
         $r[] = 'unzip ---> ' . $msg;
     }
@@ -156,13 +151,13 @@ function unzip($path, $dir)
 
 function remove_dir($dir)
 {
-    if (!file_exists($dir)) return 'dir not exist!';
     // protect
     global $protects;
     foreach ($protects as $protect) {
         if (realpath($dir) == realpath($protect)) return 'ok.';
     }
-    // 
+    // main
+    if (!file_exists($dir)) return 'dir not exist!';
     foreach (glob($dir . '/*') as $item) {
         if (is_file($item)) {
             $r = remove_file($item);
@@ -178,13 +173,13 @@ function remove_dir($dir)
 
 function remove_file($path)
 {
-    if (!file_exists($path)) return 'file not exist';
     // protect
     global $protects;
     foreach ($protects as $protect) {
         if (realpath($path) == realpath($protect)) return 'ok.';
     }
-    //
+    // main
+    if (!file_exists($path)) return 'file not exist';
     // $path_gbk = iconv('UTF-8', 'GBK', $path);
     // $r = unlink($path_gbk);
     $r = unlink($path);
@@ -195,6 +190,12 @@ function remove_file($path)
 
 function copy_dir($source, $dest)
 {
+    // protect
+    global $protects;
+    foreach ($protects as $protect) {
+        if (realpath($dest) == realpath($protect)) return 'ok.';
+    }
+    // main
     if (!file_exists($dest)) {
         $r = mkdir($dest, 0755, true);
         if ($r === false) return 'mkdir error!';
@@ -220,6 +221,12 @@ function copy_dir($source, $dest)
 
 function copy_file($source, $dest)
 {
+    // protect
+    global $protects;
+    foreach ($protects as $protect) {
+        if (realpath($dest) == realpath($protect)) return 'ok.';
+    }
+    // main
     $dest_dir_path = dirname($dest);
     if (!file_exists($dest_dir_path)) {
         $r = mkdir($dest_dir_path, 0755, true);
