@@ -91,11 +91,12 @@ function do_job($job) {
     }
     // unzip
     if (file_exists($download_file_name)){
-        if (file_exists($unzip_dir_name)) {
-            $msg = 'unzip dir already exist!';
-        } else {
-            $msg = unzip($download_file_name, $unzip_dir_name);
-        }
+        // if (file_exists($unzip_dir_name)) {
+        //     $msg = 'unzip dir already exist!';
+        // } else {
+        //     $msg = unzip($download_file_name, $unzip_dir_name);
+        // }
+        $msg = unzip($download_file_name, $unzip_dir_name);
         $r[] = 'unzip ---> ' . $msg;
     }
     // copy
