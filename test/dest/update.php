@@ -12,6 +12,7 @@ ini_set('display_errors', 'On');
 date_default_timezone_set('Asia/Shanghai');
 // main
 $this_file_name_main_part = basename(__FILE__, '.php');
+$this_file_name = $this_file_name_main_part . '.php';
 $config_file_name = $this_file_name_main_part . '.json';
 $log_file_name = $this_file_name_main_part . '.log';
 //// config
@@ -25,6 +26,8 @@ if ($config_json == false) {
     exit();
 }
 $config = json_decode($config_json, true);
+// $config = json_decode($config_json);
+
 //// jobs
 $jobs = $config['jobs'];
 $excludes = $config['excludes'];
@@ -184,15 +187,8 @@ function copy_dir($source, $dest)
 function remove_file($path)
 {
     if (!file_exists($path)) return 'file not exist';
-    // global $excludes;
-    // $excs = $GLOBALS['excludes'];
-    // $excludes = array_copy($excs);
-    // $excludes = array_merge(array(), $excs);
-    $excludes = array(
-        './update.php',
-        './update.josn',
-        './update.log'
-    );
+    // exclude
+    global $excludes;
     foreach ($excludes as $exclude) {
         if (realpath($path) == realpath($exclude)) return 'ok.';
     }

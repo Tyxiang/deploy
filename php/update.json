@@ -19,5 +19,5 @@
       "to": "./file/product/p-02/readme.md"
     }
   ],
-  "excludes": ["./update.php", "./update.json", "./update.log"]
+  "excludes": ["./updata.php", "./updata.json", "./update.log"]
 }
