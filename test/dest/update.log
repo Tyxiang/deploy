@@ -10,3 +10,27 @@
 [ 2021-11-30 10:15:26 ] copy "simple-php-updater-main/test/source/doc/readme.md" to "./file/product/p-02/readme.md" ---> ok.
 [ 2021-11-30 10:15:26 ] remove download file ---> ok.
 [ 2021-11-30 10:15:26 ] remove unzip dir ---> ok.
+[ 2021-11-30 10:17:35 ] clear dest "./" ---> ok.
+[ 2021-11-30 10:17:35 ] download "https://github.com/Tyxiang/simple-php-updater/archive/refs/heads/main.zip" ---> ok.
+[ 2021-11-30 10:17:35 ] unzip ---> ok.
+[ 2021-11-30 10:17:35 ] copy "simple-php-updater-main/test/source/src" to "./" ---> ok.
+[ 2021-11-30 10:17:35 ] download "https://github.com/Tyxiang/simple-php-updater/archive/refs/heads/main.zip" ---> file already exist!
+[ 2021-11-30 10:17:35 ] unzip ---> unzip dir already exist!
+[ 2021-11-30 10:17:35 ] copy "simple-php-updater-main/test/source/doc" to "./file/product/p-01" ---> ok.
+[ 2021-11-30 10:17:35 ] download "https://github.com/Tyxiang/simple-php-updater/archive/refs/heads/main.zip" ---> file already exist!
+[ 2021-11-30 10:17:35 ] unzip ---> unzip dir already exist!
+[ 2021-11-30 10:17:35 ] copy "simple-php-updater-main/test/source/doc/readme.md" to "./file/product/p-02/readme.md" ---> ok.
+[ 2021-11-30 10:17:35 ] remove download file ---> ok.
+[ 2021-11-30 10:17:35 ] remove unzip dir ---> ok.
+[ 2021-11-30 10:21:52 ] clear dest "./" ---> ok.
+[ 2021-11-30 10:21:52 ] download "https://github.com/Tyxiang/simple-php-updater/archive/refs/heads/main.zip" ---> ok.
+[ 2021-11-30 10:21:52 ] unzip ---> ok.
+[ 2021-11-30 10:21:52 ] copy "simple-php-updater-main/test/source/src" to "./" ---> ok.
+[ 2021-11-30 10:21:52 ] download "https://github.com/Tyxiang/simple-php-updater/archive/refs/heads/main.zip" ---> file already exist!
+[ 2021-11-30 10:21:52 ] unzip ---> unzip dir already exist!
+[ 2021-11-30 10:21:52 ] copy "simple-php-updater-main/test/source/doc" to "./file/product/p-01" ---> ok.
+[ 2021-11-30 10:21:52 ] download "https://github.com/Tyxiang/simple-php-updater/archive/refs/heads/main.zip" ---> file already exist!
+[ 2021-11-30 10:21:52 ] unzip ---> unzip dir already exist!
+[ 2021-11-30 10:21:52 ] copy "simple-php-updater-main/test/source/doc/readme.md" to "./file/product/p-02/readme.md" ---> ok.
+[ 2021-11-30 10:21:52 ] remove download file ---> ok.
+[ 2021-11-30 10:21:52 ] remove unzip dir ---> ok.
