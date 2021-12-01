@@ -1,5 +1,7 @@
 # About
 
+> [English](README.md)
+
 ## 1. 概述
 
 - 这是个为 php 设计的更新工具；
