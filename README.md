@@ -1,5 +1,7 @@
 # About
 
+> [简体中文](README-cn.md)
+
 ## 1. Overview
 
 - This is an update tool designed for php;
@@ -28,7 +30,7 @@
 - Set the hook's push event to trigger an http request to access the `deploy.php` on the virtual host;
 - Complete the deployment;
 
-## 4. others
+## 4. Others
 
 - When copying, existing files will be overwritten;
 - Chinese file names may not be deleted;
