@@ -1,6 +1,6 @@
 # About
 
-> [简体中文](README-cn.md)
+> [简体中文](doc/README-cn.md)
 
 ## 1. Overview
 
